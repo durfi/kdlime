@@ -107,6 +107,15 @@ klondike.start = function(){
 		this.layer.appendChild(this.foundations[i]);
 	}
 	
+	//Create the deck
+	this.deck = new klondike.Deck(this, klondike.STACK_COLOR, 120, 160).setPosition(0, 10);
+	this.layer.appendChild(this.deck);
+	
+	// Create the revealed stack
+	this.revealed = new klondike.Foundation(i, 120, 160, klondike.FOUNDATION_COLOR)
+		.setPosition(150, 10);
+	this.layer.appendChild(this.revealed);
+	
 	// Start a new game
 	klondike.newGame();
 	
@@ -162,13 +171,13 @@ klondike.newGame = function () {
 	
 	// If this isn't the first game, delete the previous cards.
 	if (this.deck != null) {
-		for (var i = 0; i < this.deck.cards.length; i ++) {
-			this.layer.removeChild(this.deck.cards[i]);
+		for (var i = 0; i < this.deck.allcards.length; i ++) {
+			this.layer.removeChild(this.deck.allcards[i]);
 		}
 	}
 	
 	// Create, shuffle and deal the deck
-	this.deck = new klondike.Deck(this);
+	this.deck.CreateCards();
 	this.deck.Shuffle();
 	this.deck.Deal();
 };

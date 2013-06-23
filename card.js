@@ -40,7 +40,11 @@ klondike.Card.prototype.SetStack = function(stack) {
 };
 
 klondike.Card.prototype.flip = function(stack) {
-	this.isFaceUp = this.isFaceUp ? false : true;
+	this.setFaceUp(!this.isFaceUp);
+};
+
+klondike.Card.prototype.setFaceUp = function(faceUp) {
+	this.isFaceUp = faceUp;
 	if (this.isFaceUp) {
 		this.setFill(this.frame);
 	} else {
@@ -82,6 +86,16 @@ klondike.Card.MakeCard = function(suit, value) {
 			value);
 	goog.events.listen(card, ['mousedown','touchstart'], function(e){
 		e.event.stopPropagation();
+		
+		// Click was on deck. Deal new card!
+		if (card.stack.number == -1) {
+			klondike.layer.setChildIndex(card,klondike.layer.getNumberOfChildren()-1);
+			klondike.deck.RemoveCard(card);
+			card.flip();
+			card.MoveToStack(klondike.revealed);
+			console.log("New card from deck.");
+			return;
+		}
 		
 		// Is substack valid solitaire stack?
 		if (!card.stack.CanMove(card)) {
