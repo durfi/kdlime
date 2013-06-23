@@ -9,14 +9,21 @@ klondike.Card = function(image, width, height, suit, value) {
 	this.setSize(width, height);
 	this.suit = suit;
 	this.value = value;
+	this.isFaceUp = true;
 	
 	// Create sprite from image
-	var frame = new lime.fill.Frame(
+	this.frame = new lime.fill.Frame(
 			image, 
 			value * (klondike.CARD_WIDTH-1),
 			suit * klondike.CARD_HEIGHT, 
 			klondike.CARD_WIDTH, klondike.CARD_HEIGHT);
-	this.setFill(frame);
+	// Create background sprite from image
+	this.bgframe = new lime.fill.Frame(
+			image,
+			0 * (klondike.CARD_WIDTH-1),
+			4 * klondike.CARD_HEIGHT, 
+			klondike.CARD_WIDTH, klondike.CARD_HEIGHT);
+	this.setFill(this.frame);
 };
 goog.inherits(klondike.Card, lime.Sprite);
 
@@ -26,10 +33,19 @@ klondike.Card.values = new Array("A", "2", "3", "4", "5", "6", "7",
 
 klondike.Card.prototype.toString = function() {
 	return klondike.Card.suits[this.suit] + klondike.Card.values[this.value];
-}
+};
 
 klondike.Card.prototype.SetStack = function(stack) {
 	this.stack = stack;
+};
+
+klondike.Card.prototype.flip = function(stack) {
+	this.isFaceUp = this.isFaceUp ? false : true;
+	if (this.isFaceUp) {
+		this.setFill(this.frame);
+	} else {
+		this.setFill(this.bgframe);
+	}
 };
 
 /**
@@ -121,6 +137,15 @@ klondike.Card.MakeCard = function(suit, value) {
 			// Move the cards!
 			for (var i = 0; i < draggedCards.length; i ++) {
 				draggedCards[i].MoveToStack(dropTarget);
+			}
+			
+			// If a stack's top card is facing down, flip that card!
+			for (var i = 0; i < klondike.STACK_COUNT; i ++) {
+				if (klondike.stacks[i].Size() == 0)
+					continue;
+				if (!klondike.stacks[i].TopCard().isFaceUp) {
+					klondike.stacks[i].TopCard().flip();
+				}
 			}
 			
 		}); // End of dropping to target stack

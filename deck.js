@@ -37,12 +37,19 @@ klondike.Deck.prototype.Shuffle = function(seed) {
  * Deal the cards to the table stacks.
  */
 klondike.Deck.prototype.Deal = function() {
-	for (var i = 0; i < this.cards.length; i ++) {
-		this.cards[i].setPosition(10, 10);
-		this.fc.layer.appendChild(this.cards[i]);
-		
-		this.cards[i].MoveToStack(this.fc.stacks[i%this.fc.stacks.length]);
+	var cardNum = 0;
+	for (var i = 0; i < klondike.STACK_COUNT; i ++) {
+		for (var j = 0; j <= i; j ++) {
+			if (i != j) {
+				this.cards[cardNum].flip();
+			}
+			this.cards[cardNum].setPosition(10, 10);
+			this.fc.layer.appendChild(this.cards[cardNum]);
+			this.cards[cardNum].MoveToStack(this.fc.stacks[i]);
+			cardNum++;
+		}
 	}
+
 };
 
 //+ Jonas Raoni Soares Silva

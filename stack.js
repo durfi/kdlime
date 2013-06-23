@@ -42,12 +42,15 @@ klondike.Stack.prototype.getName = function() {
  * @returns {Boolean}
  */
 klondike.Stack.prototype.IsValid = function(cards) {
+	var card = cards[0];
+	
 	// Valid if the stack is empty and card is a king
 	if (this.cards.length == 0 && card.value == 12)
 		return true;
+	if (this.cards.length == 0)
+		return false;
 	
 	// Valid if the color is different and the value is one less
-	var card = cards[0];
 	var top = this.TopCard();
 	if ((top.suit % 2) != (card.suit % 2)
 			&& top.value == card.value + 1) {
@@ -66,6 +69,10 @@ klondike.Stack.prototype.IsValid = function(cards) {
 klondike.Stack.prototype.CanMove = function(card) {
 	var index = this.cards.indexOf(card);
 	if (index < 0)
+		return false;
+	
+	// Can't be moved if it's face down
+	if (!card.isFaceUp)
 		return false;
 	
 	// Can't be moved if it's substack isn't correct
